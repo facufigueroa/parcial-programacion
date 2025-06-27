@@ -1,41 +1,111 @@
 from abc import ABC, abstractmethod
 
+
 #Clase abstracta
 class LibraryItem(ABC) :
     def __init__(self, title : str, itemId : int):
-        self.title = title
-        self.itemId = itemId
+        if type(title) != str :
+            raise(TypeError, "Title must be a string.")
+        elif type(itemId) != int :
+            raise(TypeError, "Item id must be an int.")
+        elif title == "" :
+            raise(ValueError, "Title is required.")
+        elif itemId <= 0 :
+            raise(ValueError, "Item id must be positive.")
+        else :
+            self.title = title
+            self.itemId = itemId
     
     @abstractmethod
     def checkout(self, user : str) -> str :
         pass
 
+
 #Subclase
 class Book(LibraryItem) :
     def __init__(self, title : str, itemId : int, author : str, pages : int):
-        if type(title) != str :
-            raise(TypeError, "Title must be a string.")
-        elif type(author) != str :
+        super().__init__(title, itemId)
+        if type(author) != str :
             raise(TypeError, "Author must be a string.")
-        elif type(itemId) != int :
-            raise(TypeError, "ItemId must be an int.")
         elif type(pages) != int :
             raise(TypeError, "Pages must be an int.")
-        elif title == "" :
-            raise(ValueError, "Title is required.")
         elif author == "" :
             raise(ValueError, "Author is required.")
-        elif itemId <= 0 :
-            raise(ValueError, "ItemId must be positive.")
         elif pages <= 0 :
             raise(ValueError, "Pages must be positive.")
         else :
-            super().__init__(title, itemId)
             self.author = author
             self.pages = pages
     
     def checkout(self, user):
-        return f"Book {self.title} checked out by {user}."
+        return f"Book '{self.title}' checked out by {user}."
+    
+    def __str__(self) -> str:
+        return f"Title: {self.title}, Author: {self.author}, Pages: {self.pages}"
+
 
 #Subclase
-libro = Book("Cars", "25", "Juan Cruz Perez", 123)
+class Magazine(LibraryItem) :
+    def __init__(self, title: str, itemId: int, issueNumber : int):
+        super().__init__(title, itemId)
+        if type(issueNumber) != int :
+            raise(TypeError, "Issue number must be an int.")
+        elif issueNumber <= 0 :
+            raise(ValueError, "Issue number must be positive.")
+        else :
+            self.issueNumber = issueNumber
+    
+    def checkout(self, user):
+        return f"Magazine '{self.title}' issue {self.issueNumber} checked out by {user}."
+    
+    def __str__(self) -> str:
+        return f"Title: {self.title}, issue number: {self.issueNumber}"
+
+
+#Función para obtener los items del archivo csv
+def loadLibraryItems(path : str) -> list :
+    items = []
+    with open(path, "r") as file :
+        for row in file :
+            item = row.strip().split(",")
+            if item[0] == "book" :
+                items.append(Book(item[1], int(item[2]), item[3], int(item[4])))
+            else :
+                items.append(Magazine(item[1], int(item[2]), int(item[3])))
+    return items
+
+def checkoutItems(items : list, user : str) -> list :
+    messages = []
+    for item in items :
+        messages.append(item.checkout(user))
+    return messages
+
+
+# Función para contar la cantidad de libros y revistas
+def countItems(items : list) -> dict :
+    count = {
+        "books" : 0,
+        "magazines" : 0
+    }
+    for item in items :
+        if item.__class__.__name__ == "Book" :
+            count["books"] += 1
+        else :
+            count["magazines"] += 1
+    return count
+
+def findByTitle(items : list, keyword : str) -> list :
+    libraryItems = []
+    for item in items :
+        if keyword.lower() in item.title.lower() :
+            libraryItems.append(item)
+    return libraryItems
+
+
+items = loadLibraryItems("library.csv")
+
+harryPotter = findByTitle(items, "Harry Potter")
+
+for i in harryPotter :
+    print(i)
+
