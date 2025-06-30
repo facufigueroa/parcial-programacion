@@ -37,7 +37,7 @@ class Book(LibraryItem) :
             self.author = author
             self.pages = pages
     
-    def checkout(self, user):
+    def checkout(self, user : str) -> str:
         return f"Book '{self.title}' checked out by {user}."
     
     def __str__(self) -> str:
@@ -55,7 +55,7 @@ class Magazine(LibraryItem) :
         else :
             self.issueNumber = issueNumber
     
-    def checkout(self, user):
+    def checkout(self, user : str) -> str:
         return f"Magazine '{self.title}' issue {self.issueNumber} checked out by {user}."
     
     def __str__(self) -> str:
@@ -63,7 +63,7 @@ class Magazine(LibraryItem) :
 
 
 #Función para obtener los items del archivo csv
-def loadLibraryItems(path : str) -> list :
+def loadLibraryItems(path : str) -> list[LibraryItem] :
     items = []
     with open(path, "r") as file :
         for row in file :
@@ -74,15 +74,19 @@ def loadLibraryItems(path : str) -> list :
                 items.append(Magazine(item[1], int(item[2]), int(item[3])))
     return items
 
-def checkoutItems(items : list, user : str) -> list :
-    messages = []
-    for item in items :
-        messages.append(item.checkout(user))
-    return messages
+
+def checkoutItems(items : list[LibraryItem], user : str) -> list[str] :
+    if type(user) != str :
+        raise TypeError("user must be a string")
+    else :
+        messages = []
+        for item in items :
+            messages.append(item.checkout(user))
+        return messages
 
 
 # Función para contar la cantidad de libros y revistas
-def countItems(items : list) -> dict :
+def countItems(items : list[LibraryItem]) -> dict :
     count = {
         "books" : 0,
         "magazines" : 0
@@ -94,18 +98,21 @@ def countItems(items : list) -> dict :
             count["magazines"] += 1
     return count
 
-def findByTitle(items : list, keyword : str) -> list :
-    libraryItems = []
-    for item in items :
-        if keyword.lower() in item.title.lower() :
-            libraryItems.append(item)
-    return libraryItems
 
+#Función para filtrar items
+def findByTitle(items : list[LibraryItem], keyword : str) -> list[LibraryItem] :
+    if type(keyword) != str :
+        raise TypeError("keyword must be a string")
+    else :
+        libraryItems = []
+        for item in items :
+            if keyword.lower() in item.title.lower() :
+                libraryItems.append(item)
+        return libraryItems
 
-items = loadLibraryItems("library.csv")
+# libraryItems = loadLibraryItems("library.csv")
 
-harryPotter = findByTitle(items, "Harry Potter")
+# items = findByTitle(libraryItems, "harry")
 
-for i in harryPotter :
-    print(i)
-
+# for i in items :
+#     print(i)
