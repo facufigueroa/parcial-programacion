@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import csv
 
 
 #Clase abstracta
@@ -68,12 +69,18 @@ class Magazine(LibraryItem) :
 def loadLibraryItems(path : str) -> list[LibraryItem] :
     items = []
     with open(path, "r") as file :
-        for row in file :
-            item = row.strip().split(",")
-            if item[0] == "book" :
-                items.append(Book(item[1], int(item[2]), item[3], int(item[4])))
-            elif item[0] == "magazine" :
-                items.append(Magazine(item[1], int(item[2]), int(item[3])))
+        reader = csv.reader(file)
+        for row in reader :
+            if row[0] == "book" :
+                if len(row) != 5 :
+                    raise ValueError("Book row must have 5 items.")
+                else :
+                    items.append(Book(row[1], int(row[2]), row[3], int(row[4])))
+            elif row[0] == "magazine" :
+                if len(row) != 4 :
+                    raise ValueError("Magazine row must have 4 items.")
+                else :
+                    items.append(Magazine(row[1], int(row[2]), int(row[3])))
     return items
 
 
