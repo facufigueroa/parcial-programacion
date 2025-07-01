@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 #Clase abstracta
 class LibraryItem(ABC) :
     def __init__(self, title : str, itemId : int):
-        if type(title) != str :
+        if not isinstance(title, str) :
             raise TypeError("Title must be a string.")
-        elif type(itemId) != int :
+        elif not isinstance(itemId, int) :
             raise TypeError("Item id must be an int.")
         elif title == "" :
             raise ValueError("Title is required.")
@@ -26,9 +26,9 @@ class Book(LibraryItem) :
     def __init__(self, title : str, itemId : int, author : str, pages : int):
         super().__init__(title, itemId)
 
-        if type(author) != str :
+        if not isinstance(author, str) :
             raise TypeError("Author must be a string.")
-        elif type(pages) != int :
+        elif not isinstance(pages, int) :
             raise TypeError("Pages must be an int.")
         elif author == "" :
             raise ValueError("Author is required.")
@@ -50,7 +50,7 @@ class Magazine(LibraryItem) :
     def __init__(self, title: str, itemId: int, issueNumber : int):
         super().__init__(title, itemId)
 
-        if type(issueNumber) != int :
+        if not isinstance(issueNumber, int) :
             raise TypeError("Issue number must be an int.")
         elif issueNumber <= 0 :
             raise ValueError("Issue number must be positive.")
