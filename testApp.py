@@ -1,4 +1,6 @@
 import unittest
+import csv
+import tempfile
 from app import Book, Magazine, loadLibraryItems, checkoutItems, countItems, findByTitle
 
 class TestApp(unittest.TestCase) :
@@ -54,6 +56,26 @@ class TestApp(unittest.TestCase) :
 
         self.assertNotEqual(book.checkout("Facu"), "Book 'El principito' checked out by .")
         self.assertNotEqual(magazine.checkout("Facu"), "Magazine 'Las aventuras de Juan' issue 152 checked out by .")
+    
+    # def testLoadLibraryItemsPositive(self) :
+    #     with tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False) as tempCsvFile :
+    #         csvWriter = csv.writer(tempCsvFile)
+
+    #         csvWriter.writerow(["book", "El principito", 15, "Juan Perez", 153])
+    #         csvWriter.writerow(["magazine", "Las aventuras de Juan", 15, 152])
+            
+    #     self.assertEqual(loadLibraryItems(tempCsvFile.name), [Book("El principito", 15, "Juan Perez", 153), Magazine("Las aventuras de Juan", 15, 152)])
+
+    def testLoadLibraryItemsNegative(self) :
+        with tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False) as tempCsvFile :
+            csvWriter = csv.writer(tempCsvFile)
+            
+            csvWriter.writerow(["book", 15, "Juan Perez", 153])
+            csvWriter.writerow(["magazine", "Las aventuras de Juan", 152])
+
+        with self.assertRaises(ValueError) :
+            loadLibraryItems(tempCsvFile.name)
+            
     
     def testCheackoutItemsPositive(self) :
         libraryItems = [Book("El principito", 15, "Juan Perez", 153), Magazine("Las aventuras de Juan", 15, 152)]
