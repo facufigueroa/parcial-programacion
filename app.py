@@ -21,6 +21,10 @@ class LibraryItem(ABC) :
     def checkout(self, user : str) -> str :
         pass
 
+    @abstractmethod
+    def __eq__(self, other: object) -> bool:
+        pass
+
 
 #Subclase
 class Book(LibraryItem) :
@@ -42,6 +46,11 @@ class Book(LibraryItem) :
     def checkout(self, user : str) -> str:
         return f"Book '{self.title}' checked out by {user}."
     
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Book) :
+            return self.title == other.title and self.itemId == other.itemId and self.author == other.author and self.pages == other.pages
+        return False
+    
     def __str__(self) -> str:
         return f"Title: {self.title}, Author: {self.author}, Pages: {self.pages}."
 
@@ -61,12 +70,18 @@ class Magazine(LibraryItem) :
     def checkout(self, user : str) -> str:
         return f"Magazine '{self.title}' issue {self.issueNumber} checked out by {user}."
     
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Magazine) :
+            return self.title == other.title and self.itemId == other.itemId and self.issueNumber == other.issueNumber
+        return False
+    
     def __str__(self) -> str:
         return f"Title: {self.title}, issue number: {self.issueNumber}."
 
 
 #Función para obtener los items del archivo csv
-def loadLibraryItems(path : str) -> list[LibraryItem] :
+#def loadLibraryItems(path : str) -> list[LibraryItem] :
+def loadLibraryItems(path : str) -> list :
     items = []
     with open(path, "r") as file :
         reader = csv.reader(file)
@@ -83,8 +98,8 @@ def loadLibraryItems(path : str) -> list[LibraryItem] :
                     items.append(Magazine(row[1], int(row[2]), int(row[3])))
     return items
 
-
-def checkoutItems(items : list[LibraryItem], user : str) -> list[str] :
+#def checkoutItems(items : list[LibraryItem], user : str) -> list[str] :
+def checkoutItems(items : list, user : str) -> list :
     if type(user) != str :
         raise TypeError("user must be a string")
     else :
@@ -95,7 +110,8 @@ def checkoutItems(items : list[LibraryItem], user : str) -> list[str] :
 
 
 # Función para contar la cantidad de libros y revistas
-def countItems(items : list[LibraryItem]) -> dict :
+#def countItems(items : list[LibraryItem]) -> dict :
+def countItems(items : list) -> dict :
     count = {
         "books" : 0,
         "magazines" : 0
@@ -109,7 +125,8 @@ def countItems(items : list[LibraryItem]) -> dict :
 
 
 #Función para filtrar items
-def findByTitle(items : list[LibraryItem], keyword : str) -> list[LibraryItem] :
+#def findByTitle(items : list[LibraryItem], keyword : str) -> list[LibraryItem] :
+def findByTitle(items : list, keyword : str) -> list :
     if type(keyword) != str :
         raise TypeError("keyword must be a string")
     else :
