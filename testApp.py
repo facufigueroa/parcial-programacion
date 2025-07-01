@@ -15,14 +15,26 @@ class TestApp(unittest.TestCase) :
     def testBookConstructorNegative(self) :
         with self.assertRaises(TypeError) :
             Book(1526, 15, "Juan Perez", 153)
+        
+        with self.assertRaises(TypeError) :
             Book("El principito", "15", "Juan Perez", 153)
+        
+        with self.assertRaises(TypeError) :
             Book("El principito", 15, 159466, 153)
+        
+        with self.assertRaises(TypeError) :
             Book("El principito", 15, "Juan Perez", "153")
         
         with self.assertRaises(ValueError) :
             Book("", 15, "Juan Perez", 153)
+        
+        with self.assertRaises(ValueError) :
             Book("El principito", 0, "Juan Perez", 153)
+        
+        with self.assertRaises(ValueError) :
             Book("El principito", 15, "", 153)
+        
+        with self.assertRaises(ValueError) :
             Book("El principito", 15, "Juan Perez", -1)
     
     def testMagazineConstructorPositive(self) :
@@ -35,12 +47,20 @@ class TestApp(unittest.TestCase) :
     def testMagazineConstructorNegative(self) :
         with self.assertRaises(TypeError) :
             Magazine(1565, 15, 152)
+        
+        with self.assertRaises(TypeError) :
             Magazine("Las aventuras de Juan", "15", 152)
+        
+        with self.assertRaises(TypeError) :
             Magazine("Las aventuras de Juan", 15, "152")
         
         with self.assertRaises(ValueError) :
             Magazine("", 15, 152)
+        
+        with self.assertRaises(ValueError) :
             Magazine("Las aventuras de Juan", 0, 152)
+        
+        with self.assertRaises(ValueError) :
             Magazine("Las aventuras de Juan", 15, -1)
 
     def testCheckoutPositive(self) :
@@ -57,14 +77,13 @@ class TestApp(unittest.TestCase) :
         self.assertNotEqual(book.checkout("Facu"), "Book 'El principito' checked out by .")
         self.assertNotEqual(magazine.checkout("Facu"), "Magazine 'Las aventuras de Juan' issue 152 checked out by .")
     
-    # def testLoadLibraryItemsPositive(self) :
-    #     with tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False) as tempCsvFile :
-    #         csvWriter = csv.writer(tempCsvFile)
-
-    #         csvWriter.writerow(["book", "El principito", 15, "Juan Perez", 153])
-    #         csvWriter.writerow(["magazine", "Las aventuras de Juan", 15, 152])
-            
-    #     self.assertEqual(loadLibraryItems(tempCsvFile.name), [Book("El principito", 15, "Juan Perez", 153), Magazine("Las aventuras de Juan", 15, 152)])
+    def testLoadLibraryItemsPositive(self) :
+        with tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False) as tempCsvFile :
+            csvWriter = csv.writer(tempCsvFile)
+            csvWriter.writerow(["book", "El principito", 15, "Juan Perez", 153])
+            csvWriter.writerow(["magazine", "Las aventuras de Juan", 15, 152])
+      
+        self.assertEqual(loadLibraryItems(tempCsvFile.name), [Book("El principito", 15, "Juan Perez", 153), Magazine("Las aventuras de Juan", 15, 152)])
 
     def testLoadLibraryItemsNegative(self) :
         with tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False) as tempCsvFile :
